@@ -1,0 +1,6 @@
+c:\users\max\documents\visual studio 2015\Projects\tictactoeEvo\tictactoeEvo\bin\Debug\tictactoeEvo.exe.config
+c:\users\max\documents\visual studio 2015\Projects\tictactoeEvo\tictactoeEvo\obj\Debug\tictactoeEvo.csprojResolveAssemblyReference.cache
+c:\users\max\documents\visual studio 2015\Projects\tictactoeEvo\tictactoeEvo\bin\Debug\tictactoeEvo.exe
+c:\users\max\documents\visual studio 2015\Projects\tictactoeEvo\tictactoeEvo\bin\Debug\tictactoeEvo.pdb
+c:\users\max\documents\visual studio 2015\Projects\tictactoeEvo\tictactoeEvo\obj\Debug\tictactoeEvo.exe
+c:\users\max\documents\visual studio 2015\Projects\tictactoeEvo\tictactoeEvo\obj\Debug\tictactoeEvo.pdb
