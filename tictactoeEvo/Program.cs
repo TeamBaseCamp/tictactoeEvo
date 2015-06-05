@@ -4,77 +4,69 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace tictactoeEvo
-{
-    class Program
-    {
-        static void Main(string[] args)
-        {
-            Nature ttt = new Nature();
-            ttt.newPopulation(2);
+namespace tictactoeEvo {
+class Program {
+    static void Main(string[] args) {
+        Nature mama = new Nature();
+        mama.newPopulation(2);
 
 
-            ttt.Fitness(1, 50);
+        mama.Fitness(1, 50);
 
-            var x = ttt.getApex();
+        var x = mama.getApex();
 
-            string input = "";
+        string input = "";
 
-            ttt.engine.recreate();
+        mama.engine.recreate();
 
-            int reaction;
-            while (input != "end")
-            {
+        int reaction;
+        while (input != "end") {
+            input = Console.ReadLine();
+
+            if (input == "r") {
+                mama.engine.recreate();
                 input = Console.ReadLine();
-
-                if (input == "r")
-                {
-                    ttt.engine.recreate();
-                    input = Console.ReadLine();
-                }
-
-                //parse own input 
-                ttt.engine.set(Int32.Parse(input));
-
-                printSpace(ttt.engine.space);
-
-                Console.WriteLine("");
-
-                reaction = x.react(ttt.engine.space);
-                if (reaction == -1)
-                    Console.WriteLine("dont know");
-                else
-                    ttt.engine.set(reaction);
-
-                printSpace(ttt.engine.space);
             }
 
-            Console.Read();
+            //parse own input
+            mama.engine.set(Int32.Parse(input));
+
+            printSpace(mama.engine.space);
+
+            Console.WriteLine("");
+
+            reaction = x.react(mama.engine.space);
+            if (reaction == -1)
+                Console.WriteLine("dont know");
+            else
+                mama.engine.set(reaction);
+
+            printSpace(mama.engine.space);
         }
 
-        static void printSpace(int space)
-        {
-            for (int i = 8; i >= 0; --i)
-            {
-                var x = (space & (3 << (i * 2))) >> (i * 2);
-                switch (x)
-                {
-                    case 0:
-                        Console.Write("-");
-                        break;
-                    case 1:
-                        Console.Write("x");
-                        break;
-                    case 2:
-                        Console.Write("o");
-                        break;
-                    default:
-                        Console.Write(x);
-                        break;
-                }
-                if (i == 6 || i == 3 || i == 0)
-                    Console.WriteLine();
+        Console.Read();
+    }
+
+    static void printSpace(int space) {
+        for (int i = 8; i >= 0; --i) {
+            var x = (space & (3 << (i * 2))) >> (i * 2);
+            switch (x) {
+            case 0:
+                Console.Write("-");
+                break;
+            case 1:
+                Console.Write("x");
+                break;
+            case 2:
+                Console.Write("o");
+                break;
+            default:
+                Console.Write(x);
+                break;
             }
+            if (i == 6 || i == 3 || i == 0)
+                Console.WriteLine();
         }
     }
+}
 }
