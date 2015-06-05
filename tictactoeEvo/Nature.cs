@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +18,7 @@ public class Nature {
         // _population = new Indivdual[2];
         engine = new Physics();
     }
+        
 
     public class Physics {
         public Random rnd = new Random();
@@ -135,7 +136,7 @@ public class Nature {
         int counter = 0;
         Indivdual beast = new Indivdual(_geneCapacity, _population.Length);
 
-        while (!beast.maxlevel) {
+        while (beast.genome.utilization < _geneCapacity) {
             Console.Clear();
             Console.WriteLine("Beast GenmoeUtilization: " + beast.genome.utilization);
             Console.WriteLine("Beast Level: " + beast.getLevel());
@@ -240,8 +241,7 @@ public class Nature {
 
         public void loose() {
             if (--_level == 0)
-                genome = new Genome(_capacity);
-            _level = 3;
+                _level = 3;
         }
 
         public int addRandomGene(Physics p) {
