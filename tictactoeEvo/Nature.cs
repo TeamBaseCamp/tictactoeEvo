@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.Linq;
@@ -213,6 +213,12 @@ public class Nature {
         int _popsize;
         public bool maxlevel = false;
 
+        public void dump() {
+            foreach (int gen in genome.genePool) {
+                // todo dump each gen, so we can understand what this guys knowledge is about
+            }
+        }
+
         public Indivdual(int geneCapacity, int popsize) {
             genome = new Genome(geneCapacity);
             _popsize = popsize;
@@ -225,7 +231,7 @@ public class Nature {
         }
 
         public void win() {
-            if (_level < 10) {
+            if (_level < _popsize) {
                 _level++;
             } else {
                 maxlevel = true;

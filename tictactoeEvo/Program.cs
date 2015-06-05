@@ -11,10 +11,8 @@ class Program {
         mama.newPopulation(19, 50);
         mama.Fitness(1);
 
-        var x = mama.getApex();
-
+        var boss = mama.getApex();
         string input = "";
-
         mama.engine.recreate();
 
         int reaction;
@@ -28,12 +26,10 @@ class Program {
 
             //parse own input
             mama.engine.set(Int32.Parse(input));
-
             printSpace(mama.engine.space);
-
             Console.WriteLine("");
 
-            reaction = x.react(mama.engine.space);
+            reaction = boss.react(mama.engine.space);
             if (reaction == -1)
                 Console.WriteLine("dont know");
             else
