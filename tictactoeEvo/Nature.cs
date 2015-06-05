@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,9 +7,20 @@ using System.Threading.Tasks;
 
 namespace tictactoeEvo {
 public class Nature {
+    Indivdual apex;
+    int _geneCapacity = -1;
+
     public Physics engine;
+    public Indivdual[] _population;
+
+    public Nature() {
+        // _population = new List<Indivdual>();
+        // _population = new Indivdual[2];
+        engine = new Physics();
+    }
 
     public class Physics {
+        public Random rnd = new Random();
         public int space;
         public int state;
 
@@ -36,8 +48,6 @@ public class Nature {
             }
             return false;
         }
-
-
 
         public int checkTermination() {
             if (state == 9)
@@ -111,64 +121,66 @@ public class Nature {
         }
     }
 
-    //TODO
-    //public List<Indivdual> Population;
-    public Indivdual[] Population;
-
-    public Nature() {
-        //Population = new List<Indivdual>();
-        //Population = new Indivdual[2];
-
-        engine = new Physics();
+    // TODO
+    // public List<Indivdual> _population;
+    public void newPopulation(int count, int geneCapacity) {
+        _geneCapacity = geneCapacity;
+        _population = new Indivdual[count];
+        for (int i = 0; i < _population.Length; i++) {
+            _population[i] = new Indivdual(geneCapacity, count);
+        }
     }
 
-    public void newPopulation(int count) {
-        Population = new Indivdual[count];
-    }
-
-
-    public void Fitness(int generations, int geneCapacity) {
-        Indivdual champion = new Indivdual(geneCapacity);
-        Indivdual hero = new Indivdual(geneCapacity);
-
+    public void Fitness(int generations, int anzBattle = 5) {
         int firstBattle = 0;
         int secondBattle = 0;
+        int counter = 0;
+        Indivdual beast = new Indivdual(_geneCapacity, _population.Length);
 
-        int i = 0;
+        while (beast.genome.utilization < _geneCapacity - 10) {
+            
+            Console.Clear();
+            Console.WriteLine("Beast GenmoeUtilization: " + beast.genome.utilization);
+            Console.WriteLine("Beast Level: " + beast.getLevel());
+            Console.WriteLine();
+            Console.WriteLine("     ---------------------------");
+            Console.WriteLine();
+            foreach (Indivdual opfer in _population) {
+                Console.WriteLine("opfer GenmoeUtilization: " + opfer.genome.utilization);
+                Console.WriteLine("opfer Level: " + opfer.getLevel());
+                Console.WriteLine();
+            }
+            Console.WriteLine("rounds: " + counter++);
 
-        int utilMax = 0;
+            foreach (Indivdual hero in _population) {
+                foreach (Indivdual champion in _population) {
+                    if (hero.getLevel() != champion.getLevel())
+                        continue;
+                    int winsChamp = 0;
+                    // Console.WriteLine("fight!");
+                    for (int battle = 0; battle < anzBattle; battle++ ) {
+                        firstBattle = evaluateWithGeneExtension(champion, hero);
+                        secondBattle = evaluateWithGeneExtension(hero, champion);
+                        if (firstBattle == 1)
+                            winsChamp++;
+                        if (secondBattle == 2)
+                            winsChamp++;
 
-        while (champion.genome.utilization < geneCapacity - 10) {
-            if (utilMax < champion.genome.utilization) {
-                utilMax = champion.genome.utilization;
-                Console.WriteLine(utilMax);
+                    }
+                    // Console.WriteLine("winsChamp: " + winsChamp);
+                }
             }
 
-            ++i;
-            firstBattle = evaluateWithGeneExtension(champion, hero);
-            secondBattle = evaluateWithGeneExtension(hero, champion);
-
-            //apex 2 lose
-            if ((firstBattle == 2) || (secondBattle == 1))
-                champion = hero;
-
-            hero = new Indivdual(geneCapacity);
+            foreach (Indivdual bürger in _population)  // utf8 supp? wow
+                if (bürger.getLevel() > beast.getLevel())
+                    beast = bürger;
         }
-
-        apex = champion;
+        apex = beast;
     }
-    Indivdual apex;
-
-    public Indivdual getApex() {
-        return apex;
-    }
-
 
     public int evaluateWithGeneExtension(Indivdual first, Indivdual second) {
         engine.recreate();
-
         int result = 0;
-
         int reaction = 0;
 
         for (int i = 0; i < 5; ++i) {
@@ -177,16 +189,24 @@ public class Nature {
                 reaction = first.addRandomGene(engine);
             result = engine.set(reaction);
 
-            if (result == 0x1 || result == 0x3)
+            if (result == 1) { // (result == 0x1 || result == 0x3) {
+                first.win();
+                if (second.getLevel() >= first.getLevel())
+                    second.loose();
                 return result;
+            }
 
             reaction = second.react(engine.space);
             if (reaction == -1)
                 reaction = second.addRandomGene(engine);
             result = engine.set(reaction);
 
-            if (result == 0x2 || result == 0x3)
+            if (result == 2) { // (result == 0x2 || result == 0x3) { // <- I dont get that one
+                if (second.getLevel() <= first.getLevel())
+                    first.loose();
+                second.win();
                 return result;
+            }
         }
 
         //TODO
@@ -196,14 +216,37 @@ public class Nature {
     public class Indivdual {
         //TODO rausnehmen
         public Genome genome;
+        int _level;
+        int _capacity;
+        int _popsize;
 
-        public Indivdual(int geneCapacity) {
+        public Indivdual(int geneCapacity, int popsize) {
             genome = new Genome(geneCapacity);
+            _popsize = popsize;
+            _level = 3;
+            _capacity = geneCapacity;
+        }
+
+        public int getLevel() {
+            return _level;
+        }
+
+        public void win() {
+            if (_level < Math.Log(_popsize))
+                _level++;
+        }
+
+        public void loose() {
+            if (_level == 2)
+                genome = new Genome(_capacity);
+                _level = 3;
+            if (! (--_level > 3))
+                _level = 3;
         }
 
         public int addRandomGene(Physics p) {
-            Random rnd = new Random();
-            int pos = rnd.Next(9 - p.state);
+            
+            int pos = p.rnd.Next(9 - p.state);
 
             int j = 0;
             for (int i = 0; i < 9; ++i) {
@@ -217,7 +260,6 @@ public class Nature {
             }
             return -1;
         }
-
 
         public void addGene(int code, Byte answer) {
             if (genome.utilization < genome.capacity) {
@@ -262,6 +304,9 @@ public class Nature {
         }
     }
 
-
+    /* Getter and setter */
+    public Indivdual getApex() {
+        return apex;
+    }
 }
 }

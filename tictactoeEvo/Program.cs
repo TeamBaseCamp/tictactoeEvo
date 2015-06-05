@@ -8,10 +8,8 @@ namespace tictactoeEvo {
 class Program {
     static void Main(string[] args) {
         Nature mama = new Nature();
-        mama.newPopulation(2);
-
-
-        mama.Fitness(1, 50);
+        mama.newPopulation(19, 50);
+        mama.Fitness(1);
 
         var x = mama.getApex();
 
