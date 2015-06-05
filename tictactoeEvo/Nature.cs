@@ -131,17 +131,15 @@ public class Nature {
         }
     }
 
-    public void Fitness(int generations, int anzBattle = 5) {
-        int firstBattle = 0;
-        int secondBattle = 0;
+    public void Fitness(int generations, int anzBattle = 3) {
         int counter = 0;
         Indivdual beast = new Indivdual(_geneCapacity, _population.Length);
 
-        while (beast.genome.utilization < _geneCapacity - 10) {
-            
+        while (!beast.maxlevel) {
             Console.Clear();
             Console.WriteLine("Beast GenmoeUtilization: " + beast.genome.utilization);
             Console.WriteLine("Beast Level: " + beast.getLevel());
+            // Console.WriteLine("maxlevel:" + Math.Log(_population.Length, 1.7));
             Console.WriteLine();
             Console.WriteLine("     ---------------------------");
             Console.WriteLine();
@@ -152,22 +150,16 @@ public class Nature {
             }
             Console.WriteLine("rounds: " + counter++);
 
-            foreach (Indivdual hero in _population) {
+            foreach (Indivdual hero in _population) { // jeder gegen jeden, sogar gegen sich selbst!
                 foreach (Indivdual champion in _population) {
+                    if (hero == champion)
+                        continue;
                     if (hero.getLevel() != champion.getLevel())
                         continue;
-                    int winsChamp = 0;
-                    // Console.WriteLine("fight!");
                     for (int battle = 0; battle < anzBattle; battle++ ) {
-                        firstBattle = evaluateWithGeneExtension(champion, hero);
-                        secondBattle = evaluateWithGeneExtension(hero, champion);
-                        if (firstBattle == 1)
-                            winsChamp++;
-                        if (secondBattle == 2)
-                            winsChamp++;
-
+                        evaluateWithGeneExtension(champion, hero);
+                        evaluateWithGeneExtension(hero, champion);
                     }
-                    // Console.WriteLine("winsChamp: " + winsChamp);
                 }
             }
 
@@ -189,9 +181,9 @@ public class Nature {
                 reaction = first.addRandomGene(engine);
             result = engine.set(reaction);
 
-            if (result == 1) { // (result == 0x1 || result == 0x3) {
+            if (result == 0x1 || result == 0x3) {
                 first.win();
-                if (second.getLevel() >= first.getLevel())
+                if (second.getLevel() >= first.getLevel()) // dont loose lvl if your lower than him
                     second.loose();
                 return result;
             }
@@ -201,7 +193,7 @@ public class Nature {
                 reaction = second.addRandomGene(engine);
             result = engine.set(reaction);
 
-            if (result == 2) { // (result == 0x2 || result == 0x3) { // <- I dont get that one
+            if (result == 0x2 || result == 0x3) { // <- I dont get that one
                 if (second.getLevel() <= first.getLevel())
                     first.loose();
                 second.win();
@@ -219,6 +211,7 @@ public class Nature {
         int _level;
         int _capacity;
         int _popsize;
+        public bool maxlevel = false;
 
         public Indivdual(int geneCapacity, int popsize) {
             genome = new Genome(geneCapacity);
@@ -232,20 +225,21 @@ public class Nature {
         }
 
         public void win() {
-            if (_level < Math.Log(_popsize))
+            if (_level < 10) {
                 _level++;
+            } else {
+                maxlevel = true;
+            }
         }
 
         public void loose() {
-            if (_level == 2)
+            if (--_level == 0)
                 genome = new Genome(_capacity);
-                _level = 3;
-            if (! (--_level > 3))
-                _level = 3;
+            _level = 3;
         }
 
         public int addRandomGene(Physics p) {
-            
+
             int pos = p.rnd.Next(9 - p.state);
 
             int j = 0;
