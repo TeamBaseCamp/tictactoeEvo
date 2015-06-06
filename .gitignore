@@ -1,0 +1,6 @@
+*.suo
+tictactoeEvo/bin/Debug/tictactoeEvo.exe
+*.exe
+tictactoeEvo/obj/Debug/DesignTimeResolveAssemblyReferencesInput.cache
+*.cache
+tictactoeEvo/obj/Debug/tictactoeEvo.pdb
